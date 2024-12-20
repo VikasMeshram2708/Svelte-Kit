@@ -1,2 +1,7 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+	import NotesForm from './notes-form.svelte';
+</script>
+
+<div class="max-w-lg mx-auto">
+	<NotesForm />
+</div>
