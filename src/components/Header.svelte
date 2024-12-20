@@ -1,8 +1,12 @@
-<header class="border-b shadow-lg p-3">
+<header class="border-b p-3 shadow-lg">
 	<nav class="mx-auto flex w-full max-w-7xl items-center justify-between">
-		<h1 class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold"><a href="/">Notes Taking App</a></h1>
+		<h1 class="text-xl font-bold md:text-2xl lg:text-3xl xl:text-4xl">
+			<a href="/">Notes Taking App</a>
+		</h1>
 		<div>
-			<button type="button" class="variant-filled-primary btn">Login / Sign Up</button>
+			<button type="button" class="variant-filled-primary btn">
+				<a href="/auth">Login / Sign Up</a>
+			</button>
 		</div>
 	</nav>
 </header>
