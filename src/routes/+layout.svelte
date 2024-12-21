@@ -1,8 +1,9 @@
 <script lang="ts">
+	import type { Session } from '@auth/sveltekit';
 	import '../app.css';
 	import Header from '../components/Header.svelte';
 	import { Toast, initializeStores } from '@skeletonlabs/skeleton';
-	let { children } = $props();
+	let { children, data }: { children: any; data: Session } = $props();
 
 	initializeStores();
 </script>

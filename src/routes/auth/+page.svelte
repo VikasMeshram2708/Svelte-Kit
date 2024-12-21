@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { loginSchema } from '../../model/user-mode';
-
+	import { signIn } from '@auth/sveltekit/client';
 	const toastStore = getToastStore();
 
 	let toggleForm = $state('login');
@@ -11,48 +11,54 @@
 		password: ''
 	});
 
-	const handleLogin = async (e: SubmitEvent) => {
-		e.preventDefault();
-
-		const parsedRes = loginSchema.safeParse(user);
-		if (!parsedRes.success) {
-			const emailErr = parsedRes.error.flatten().fieldErrors.email?.[0] as string;
-			const passwordErr = parsedRes.error.flatten().fieldErrors.password?.[0] as string;
-			if (emailErr) {
-				return toastStore.trigger({
-					message: emailErr,
-					background: 'variant-filled-primary'
-				});
-			}
-			if (passwordErr) {
-				return toastStore.trigger({
-					message: passwordErr,
-					background: 'variant-filled-primary'
-				});
-			}
-		}
-		const configData = parsedRes.data;
-
-		const res = await fetch('/auth', {
-			method: 'POST',
-			body: new URLSearchParams({
-				email: configData?.email as string,
-				password: configData?.password as string
-			})
-		});
-
-		if (!res.ok) {
-			return toastStore.trigger({
-				message: 'Login Error',
-				background: 'variant-filled-primary'
-			});
-		}
-		console.log('ld', user);
-		return toastStore.trigger({
-			message: 'User Logged In',
-			background: 'variant-filled-success'
+	const handleLogin = async () => {
+		await signIn('github', {
+			redirect: true
 		});
 	};
+
+	// const handleLogin = async (e: SubmitEvent) => {
+	// 	e.preventDefault();
+
+	// 	const parsedRes = loginSchema.safeParse(user);
+	// 	if (!parsedRes.success) {
+	// 		const emailErr = parsedRes.error.flatten().fieldErrors.email?.[0] as string;
+	// 		const passwordErr = parsedRes.error.flatten().fieldErrors.password?.[0] as string;
+	// 		if (emailErr) {
+	// 			return toastStore.trigger({
+	// 				message: emailErr,
+	// 				background: 'variant-filled-primary'
+	// 			});
+	// 		}
+	// 		if (passwordErr) {
+	// 			return toastStore.trigger({
+	// 				message: passwordErr,
+	// 				background: 'variant-filled-primary'
+	// 			});
+	// 		}
+	// 	}
+	// 	const configData = parsedRes.data;
+
+	// 	const res = await fetch('/auth', {
+	// 		method: 'POST',
+	// 		body: new URLSearchParams({
+	// 			email: configData?.email as string,
+	// 			password: configData?.password as string
+	// 		})
+	// 	});
+
+	// 	if (!res.ok) {
+	// 		return toastStore.trigger({
+	// 			message: 'Login Error',
+	// 			background: 'variant-filled-primary'
+	// 		});
+	// 	}
+	// 	console.log('ld', user);
+	// 	return toastStore.trigger({
+	// 		message: 'User Logged In',
+	// 		background: 'variant-filled-success'
+	// 	});
+	// };
 </script>
 
 <div class="flex h-screen w-screen flex-col items-center justify-center px-4">
@@ -76,7 +82,7 @@
 		<section class="card w-full max-w-md rounded-lg p-6 shadow-md">
 			<h1 class="chead pb-4 text-center text-lg font-semibold">Login</h1>
 			<form onsubmit={handleLogin} class="grid gap-4">
-				<input
+				<!-- <input
 					bind:value={user.email}
 					class="input rounded-lg px-4 py-3"
 					type="email"
@@ -87,12 +93,12 @@
 					class="input rounded-lg px-4 py-3"
 					type="password"
 					placeholder="Type Password"
-				/>
+				/> -->
 				<button
 					type="submit"
 					class="variant-filled-primary btn w-full rounded-lg py-3 hover:shadow-lg"
 				>
-					Login
+					Login With Github
 				</button>
 			</form>
 		</section>
