@@ -81,7 +81,7 @@
 	{#if toggleForm === 'login'}
 		<section class="card w-full max-w-md rounded-lg p-6 shadow-md">
 			<h1 class="chead pb-4 text-center text-lg font-semibold">Login</h1>
-			<form onsubmit={handleLogin} class="grid gap-4">
+			<form class="grid gap-4">
 				<!-- <input
 					bind:value={user.email}
 					class="input rounded-lg px-4 py-3"
@@ -95,11 +95,12 @@
 					placeholder="Type Password"
 				/> -->
 				<button
-					type="submit"
+					type="button"
 					class="variant-filled-primary btn w-full rounded-lg py-3 hover:shadow-lg"
 				>
-					Login With Github
+					Login
 				</button>
+				{@render GoogleAuth({ message: 'Sign Up With Github' })}
 			</form>
 		</section>
 	{:else}
@@ -115,7 +116,18 @@
 				>
 					Sign Up
 				</button>
+				{@render GoogleAuth({ message: 'Sign Up With Github' })}
 			</form>
 		</section>
 	{/if}
 </div>
+
+{#snippet GoogleAuth({ message }: { message: string })}
+	<button
+		onclick={handleLogin}
+		type="button"
+		class="bg-gradient-to-br variant-gradient-secondary-primary btn w-full rounded-lg py-3 hover:shadow-lg"
+	>
+		{message}
+	</button>
+{/snippet}

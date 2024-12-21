@@ -1,10 +1,10 @@
-import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import GitHub from '@auth/sveltekit/providers/github';
 import { db } from './db';
+import { users } from './db/schema';
+import { eq } from 'drizzle-orm';
 
 export const { handle } = SvelteKitAuth({
-	adapter: DrizzleAdapter(db),
 	pages: {
 		signIn: '/auth',
 		newUser: '/auth',
@@ -15,6 +15,26 @@ export const { handle } = SvelteKitAuth({
 	callbacks: {
 		async signIn({ user, account, profile }) {
 			console.log({ user, account, profile });
+
+			const { email } = user;
+
+			const userExist = await db.query.users.findFirst({
+				where: eq(users.email, String(email))
+			});
+
+			if (userExist) {
+				if (account?.type === 'oauth') {
+					if (!userExist.emailVerified) {
+						throw new Error('Verify Your Email');
+					}
+				}
+			}
+			await db.insert(users).values({
+				name: String(user.name),
+				email: String(email),
+				password: '',
+			});
+
 			return true;
 		},
 		async jwt({ token, user }) {

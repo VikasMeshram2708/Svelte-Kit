@@ -43,7 +43,6 @@
 		"zod": "^3.24.1"
 	},
 	"dependencies": {
-		"@auth/drizzle-adapter": "^1.7.4",
 		"@auth/sveltekit": "^1.7.4",
 		"@neondatabase/serverless": "^0.10.4",
 		"@tailwindcss/container-queries": "^0.1.1",
