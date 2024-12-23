@@ -1,7 +1,35 @@
 import { fail } from '@sveltejs/kit';
 import { noteSchema } from '../model/note-model';
 import { notes } from '../db/schema';
+import { json, type ServerLoad } from '@sveltejs/kit';
 import { db } from '../db';
+
+export const load: ServerLoad = async () => {
+	try {
+		const res = await db.query.notes.findMany();
+		console.log('NOTES: ', res);
+		if (!res) {
+			return json(
+				{
+					message: 'Failed to fetch Notes'
+				},
+				{
+					status: 400
+				}
+			);
+		}
+		return { data: res };
+	} catch (e) {
+		return json(
+			{
+				message: `Something went wrong. Notes Fetching Failed. ${e}`
+			},
+			{
+				status: 500
+			}
+		);
+	}
+};
 
 export const actions = {
 	createNote: async ({ request, locals }) => {
