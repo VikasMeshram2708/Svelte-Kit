@@ -1,7 +1,10 @@
 <script>
-	import NotesForm from './notes-form.svelte';
+	import NotesForm from "$lib/components/notes-form.svelte";
+
 </script>
 
-<div class="max-w-lg mx-auto">
-	<NotesForm />
+<div class="min-h-screen">
+	<div class="py-20">
+		<NotesForm />
+	</div>
 </div>

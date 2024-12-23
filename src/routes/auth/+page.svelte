@@ -13,52 +13,10 @@
 
 	const handleLogin = async () => {
 		await signIn('github', {
-			redirect: true
+			redirect: true,
+			callbackUrl: '/'
 		});
 	};
-
-	// const handleLogin = async (e: SubmitEvent) => {
-	// 	e.preventDefault();
-
-	// 	const parsedRes = loginSchema.safeParse(user);
-	// 	if (!parsedRes.success) {
-	// 		const emailErr = parsedRes.error.flatten().fieldErrors.email?.[0] as string;
-	// 		const passwordErr = parsedRes.error.flatten().fieldErrors.password?.[0] as string;
-	// 		if (emailErr) {
-	// 			return toastStore.trigger({
-	// 				message: emailErr,
-	// 				background: 'variant-filled-primary'
-	// 			});
-	// 		}
-	// 		if (passwordErr) {
-	// 			return toastStore.trigger({
-	// 				message: passwordErr,
-	// 				background: 'variant-filled-primary'
-	// 			});
-	// 		}
-	// 	}
-	// 	const configData = parsedRes.data;
-
-	// 	const res = await fetch('/auth', {
-	// 		method: 'POST',
-	// 		body: new URLSearchParams({
-	// 			email: configData?.email as string,
-	// 			password: configData?.password as string
-	// 		})
-	// 	});
-
-	// 	if (!res.ok) {
-	// 		return toastStore.trigger({
-	// 			message: 'Login Error',
-	// 			background: 'variant-filled-primary'
-	// 		});
-	// 	}
-	// 	console.log('ld', user);
-	// 	return toastStore.trigger({
-	// 		message: 'User Logged In',
-	// 		background: 'variant-filled-success'
-	// 	});
-	// };
 </script>
 
 <div class="flex h-screen w-screen flex-col items-center justify-center px-4">
@@ -100,7 +58,7 @@
 				>
 					Login
 				</button>
-				{@render GoogleAuth({ message: 'Sign Up With Github' })}
+				{@render GoogleAuth({ message: 'Sign In With Github' })}
 			</form>
 		</section>
 	{:else}
@@ -126,7 +84,7 @@
 	<button
 		onclick={handleLogin}
 		type="button"
-		class="bg-gradient-to-br variant-gradient-secondary-primary btn w-full rounded-lg py-3 hover:shadow-lg"
+		class="btn variant-gradient-secondary-primary w-full rounded-lg bg-gradient-to-br py-3 hover:shadow-lg"
 	>
 		{message}
 	</button>

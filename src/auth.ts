@@ -13,8 +13,8 @@ export const { handle } = SvelteKitAuth({
 	secret: process.env.AUTH_SECRET,
 	providers: [GitHub],
 	callbacks: {
-		async signIn({ user, account, profile }) {
-			console.log({ user, account, profile });
+		async signIn({ user }) {
+			// console.log({ user, account, profile });
 
 			const { email } = user;
 
@@ -22,29 +22,31 @@ export const { handle } = SvelteKitAuth({
 				where: eq(users.email, String(email))
 			});
 
-			if (userExist) {
-				if (account?.type === 'oauth') {
-					if (!userExist.emailVerified) {
-						throw new Error('Verify Your Email');
-					}
-				}
+			console.log('user-exist', userExist);
+
+			if (!userExist) {
+				await db.insert(users).values({
+					name: String(user.name),
+					email: String(email),
+					password: ''
+				});
 			}
-			await db.insert(users).values({
-				name: String(user.name),
-				email: String(email),
-				password: '',
-			});
 
 			return true;
 		},
 		async jwt({ token, user }) {
+			const userExist = await db.query.users.findFirst({
+				where: eq(users.email, String(user?.email))
+			});
 			if (user) {
-				user.email = token.email;
+				token.id = userExist?.id;
+				token.email = userExist?.email;
 			}
 			return token;
 		},
 		async session({ token, session }) {
 			if (token) {
+				session.user.id = token.id as string;
 				session.user.email = token.email as string;
 			}
 			return session;

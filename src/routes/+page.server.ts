@@ -1,46 +1,64 @@
+import { fail } from '@sveltejs/kit';
 import { noteSchema } from '../model/note-model';
-import type { Actions } from './$types';
+import { notes } from '../db/schema';
+import { db } from '../db';
 
 export const actions = {
-	createNote: async ({ request }) => {
+	createNote: async ({ request, locals }) => {
 		try {
-			const data = await request.formData();
-
-			// Parse data into noteSchema format
-			const noteData = {
-				title: data.get('title') as string | null,
-				description: data.get('description') as string | null,
-			};
-
-			// Validate with Zod schema
-			const parsedRes = noteSchema.safeParse(noteData);
-
-			if (!parsedRes.success) {
-				// Validation failed, return errors
-				return {
+			// Check authentication
+			const session = await locals.auth();
+			if (!session?.user?.id) {
+				return fail(400, {
 					success: false,
-					errors: {
-						title: parsedRes.error.flatten().fieldErrors.title || null,
-						description: parsedRes.error.flatten().fieldErrors.description || null,
-					},
-				};
+					session: 'Login Required'
+				});
 			}
 
-			// Validation succeeded
-			const configData = parsedRes.data;
-			console.log('Received Data:', configData);
+			// Parse form data
+			const formData = await request.formData();
+
+			const data: noteSchema = {
+				title: String(formData.get('title')),
+				description: String(formData.get('description'))
+			};
+
+			// Validate input
+			const validation = noteSchema.safeParse(data);
+
+			if (!validation.success) {
+				const fieldErrors = validation.error.flatten().fieldErrors;
+				if (fieldErrors?.title) {
+					return fail(400, {
+						success: false,
+						error: fieldErrors?.title?.[0]
+					});
+				}
+				return fail(400, {
+					success: false,
+					error: fieldErrors?.description?.[0]
+				});
+			}
+
+			// Insert note into database
+			const { title, description } = validation.data;
+
+			await db.insert(notes).values({
+				title,
+				description,
+				userId: session.user.id
+			});
 
 			return {
-				success: true,
-				data: configData,
+				success: true
 			};
 		} catch (error) {
-			console.error('Error in createNote action:', error);
-			// Handle unexpected server errors
-			return {
+			console.error('Failed to create note:', error);
+
+			return fail(500, {
 				success: false,
-				errors: { general: 'An unexpected error occurred. Please try again later.' },
-			};
+				error: 'Failed to create note. Please try again later.'
+			});
 		}
-	},
-} satisfies Actions;
+	}
+};
