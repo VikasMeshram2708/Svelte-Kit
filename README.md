@@ -6,7 +6,13 @@
 
 ## TODO
 
-- [ ] Show Notes Table with Pagination Each Page Consist of 5 Entries.
+- [x] Add Pagination (with proper validation)
+
+  - [x] SKip = 5, Limit = 5 are default.
+
+- [ ] Normal User Can only create 30 Notes.
+
+- [x] Show Notes Table with Pagination.
 
 - [ ] Each Row Will have a DropDown button containing the delete update and edit button.
 

@@ -6,7 +6,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const session = await locals.auth();
 
 	// Log session details for debugging (remove in production)
-	console.log('Session details:', session?.user);
+	// console.log('Session details:', session?.user);
 
 	// Prevent redirect loops by checking if the current route is `/auth`
 	if (url.pathname === '/auth' && session?.user) {

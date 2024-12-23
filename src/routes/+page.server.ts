@@ -1,13 +1,75 @@
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { noteSchema } from '../model/note-model';
 import { notes } from '../db/schema';
 import { json, type ServerLoad } from '@sveltejs/kit';
 import { db } from '../db';
+import { desc, eq, sql } from 'drizzle-orm';
+import { paginationSchema } from '../model/pagination-model';
 
-export const load: ServerLoad = async () => {
+export const load: ServerLoad = async ({ url, locals }) => {
+	//  Session
+	const session = await locals.auth();
+	if (!session?.user?.id) {
+		return json(
+			{
+				message: 'Login Required'
+			},
+			{
+				status: 302
+			}
+		);
+	}
+
+	const limit = url.searchParams.get('limit') || 5;
+	const skip = url.searchParams.get('skip') || 5;
+
+	console.log('PARAMS: lm', limit);
+	console.log('PARAMS: sk ', skip);
+
+	// Pagination Validation
+	const pgValidation = paginationSchema.safeParse({ limit: +limit, skip: +skip });
+
+	if (!pgValidation?.success) {
+		const fieldErrors = pgValidation.error.flatten().fieldErrors;
+		console.log('fieldErrors', fieldErrors);
+
+		// Redirect to Error Page
+		if (fieldErrors.limit) {
+			throw redirect(302, `/error?error=${fieldErrors?.limit?.[0]}`);
+			// return json(
+			// 	{
+			// 		error: fieldErrors?.limit?.[0]
+			// 	},
+			// 	{
+			// 		status: 422
+			// 	}
+			// );
+		}
+		throw redirect(302, `/error?error=${fieldErrors?.skip?.[0]}`);
+
+		// return json(
+		// 	{
+		// 		error: fieldErrors?.skip?.[0]
+		// 	},
+		// 	{
+		// 		status: 422
+		// 	}
+		// );
+	}
+
 	try {
-		const res = await db.query.notes.findMany();
-		console.log('NOTES: ', res);
+		const res = await db
+			.select({
+				record: notes,
+				count: sql<number>`count(*) over()`
+			})
+			.from(notes)
+			.where(eq(notes?.userId, String(session?.user?.id)))
+			.orderBy(desc(notes?.createdAt))
+			.limit(+limit)
+			.offset(+skip);
+
+		// console.log('NOTES: ', res);
 		if (!res) {
 			return json(
 				{
@@ -18,7 +80,14 @@ export const load: ServerLoad = async () => {
 				}
 			);
 		}
-		return { data: res };
+		return {
+			notes: res.map((item) => item.record),
+			meta: {
+				total: res?.[0]?.count ?? 0,
+				skip,
+				limit
+			}
+		};
 	} catch (e) {
 		return json(
 			{
