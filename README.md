@@ -16,4 +16,4 @@
 
 - [ ] Each Row Will have a DropDown button containing the delete update and edit button.
 
-- [ ] Convert the Static Note form UI to Modal on Home Page.
+- [x] Convert the Static Note form UI to Modal on Home Page.

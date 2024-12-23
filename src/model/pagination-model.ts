@@ -10,7 +10,7 @@ export const paginationSchema = z.object({
 	skip: z
 		.number()
 		.min(0, { message: 'Skip must be greater than or equal to 0' }) // Ensure skip is non-negative
-		.max(10, { message: 'Skip must be less than or equal to 10' }) // Optional: Add a max limit if needed
+		.max(30, { message: 'Skip must be less than or equal to 30' }) // Optional: Add a max limit if needed
 		.int() // Ensure it's an integer (optional)
 });
 

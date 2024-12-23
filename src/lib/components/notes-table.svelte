@@ -12,6 +12,12 @@
 				: 0) + 1,
 		startIndex: $page.url.searchParams.get('skip') ? Number($page.url.searchParams.get('skip')) : 0
 	});
+
+	// $effect(() => {
+	// 	if (data?.meta?.total > 30) {
+	// 		goto(`/error?error=Your Free Tier is Overed. Buy a Premium`);
+	// 	}
+	// });
 </script>
 
 <div class="mx-auto w-full max-w-7xl p-4">

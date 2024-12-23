@@ -1,12 +1,13 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { noteSchema } from '../model/note-model';
 import { notes } from '../db/schema';
-import { json, type ServerLoad } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 import { db } from '../db';
 import { desc, eq, sql } from 'drizzle-orm';
 import { paginationSchema } from '../model/pagination-model';
+import type { PageServerLoad } from './$types.js';
 
-export const load: ServerLoad = async ({ url, locals }) => {
+export const load: PageServerLoad = async ({ url, locals }) => {
 	//  Session
 	const session = await locals.auth();
 	if (!session?.user?.id) {
@@ -36,28 +37,19 @@ export const load: ServerLoad = async ({ url, locals }) => {
 		// Redirect to Error Page
 		if (fieldErrors.limit) {
 			throw redirect(302, `/error?error=${fieldErrors?.limit?.[0]}`);
-			// return json(
-			// 	{
-			// 		error: fieldErrors?.limit?.[0]
-			// 	},
-			// 	{
-			// 		status: 422
-			// 	}
-			// );
 		}
 		throw redirect(302, `/error?error=${fieldErrors?.skip?.[0]}`);
-
-		// return json(
-		// 	{
-		// 		error: fieldErrors?.skip?.[0]
-		// 	},
-		// 	{
-		// 		status: 422
-		// 	}
-		// );
 	}
 
 	try {
+		// const premiumCount = await db
+		// 	.select({
+		// 		count: sql<number>`count(*) over()`
+		// 	})
+		// 	.from(notes)
+		// 	.where(eq(notes?.userId, String(session?.user?.id)));
+		// console.log('premiumCount', premiumCount[0]?.count);
+
 		const res = await db
 			.select({
 				record: notes,
