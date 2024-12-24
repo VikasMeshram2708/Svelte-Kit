@@ -12,12 +12,6 @@
 				: 0) + 1,
 		startIndex: $page.url.searchParams.get('skip') ? Number($page.url.searchParams.get('skip')) : 0
 	});
-
-	// $effect(() => {
-	// 	if (data?.meta?.total > 30) {
-	// 		goto(`/error?error=Your Free Tier is Overed. Buy a Premium`);
-	// 	}
-	// });
 </script>
 
 <div class="mx-auto w-full max-w-7xl p-4">
@@ -27,7 +21,7 @@
 				<th>No.</th>
 				<th>Title</th>
 				<th>Description</th>
-				<th>Date</th>
+				<th>TimeStamp</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -36,7 +30,12 @@
 					<td>{pgState.startIndex + i + 1}</td>
 					<td class="font-bold">{note.title}</td>
 					<td>{note.description}</td>
-					<td>{new Date(note.createdAt).toLocaleDateString()}</td>
+					<td
+						>{new Date(note.createdAt).toLocaleDateString([], {
+							minute: '2-digit',
+							hour: '2-digit'
+						})}</td
+					>
 				</tr>
 			{/each}
 		</tbody>

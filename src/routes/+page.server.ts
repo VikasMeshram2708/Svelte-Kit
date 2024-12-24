@@ -7,6 +7,7 @@ import { desc, eq, sql } from 'drizzle-orm';
 import { paginationSchema } from '../model/pagination-model';
 import type { PageServerLoad } from './$types.js';
 
+// Load Function
 export const load: PageServerLoad = async ({ url, locals }) => {
 	//  Session
 	const session = await locals.auth();
@@ -24,15 +25,15 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	const limit = url.searchParams.get('limit') || 5;
 	const skip = url.searchParams.get('skip') || 5;
 
-	console.log('PARAMS: lm', limit);
-	console.log('PARAMS: sk ', skip);
+	// console.log('PARAMS: lm', limit);
+	// console.log('PARAMS: sk ', skip);
 
 	// Pagination Validation
 	const pgValidation = paginationSchema.safeParse({ limit: +limit, skip: +skip });
 
 	if (!pgValidation?.success) {
 		const fieldErrors = pgValidation.error.flatten().fieldErrors;
-		console.log('fieldErrors', fieldErrors);
+		// console.log('fieldErrors', fieldErrors);
 
 		// Redirect to Error Page
 		if (fieldErrors.limit) {
@@ -42,14 +43,6 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	}
 
 	try {
-		// const premiumCount = await db
-		// 	.select({
-		// 		count: sql<number>`count(*) over()`
-		// 	})
-		// 	.from(notes)
-		// 	.where(eq(notes?.userId, String(session?.user?.id)));
-		// console.log('premiumCount', premiumCount[0]?.count);
-
 		const res = await db
 			.select({
 				record: notes,
@@ -73,7 +66,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 			);
 		}
 		return {
-			notes: res.map((item) => item.record),
+			notes: res?.map((e) => e?.record),
 			meta: {
 				total: res?.[0]?.count ?? 0,
 				skip,
@@ -92,6 +85,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	}
 };
 
+// Form Actions
 export const actions = {
 	createNote: async ({ request, locals }) => {
 		try {
