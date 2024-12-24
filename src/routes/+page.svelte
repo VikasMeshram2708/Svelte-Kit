@@ -4,16 +4,13 @@
 
 	import NotesTable from '$lib/components/notes-table.svelte';
 	import { Check, OctagonX, X } from 'lucide-svelte';
-	import { setContext } from 'svelte';
 
 	let { data, form } = $props();
 
-	setContext('notes', data?.notes);
-
-	console.log('d', data?.notes);
-	console.log('form', form?.success, form?.error);
+	// console.log('d-err', { form, data });
+	// console.log('form', form?.success, form?.error);
 	let toggle = $state(false); // Toggle the Notes Form
-	let alertBoxToggle = $state(false); // Toggle the Alert Box
+	let alertBoxToggle = $state<boolean | null>(null); // Toggle the Alert Box
 
 	$effect(() => {
 		if (form?.success) {
@@ -21,8 +18,8 @@
 			alertBoxToggle = true;
 			invalidateAll();
 		} else if (form?.error) {
-			alertBoxToggle = false;
 			toggle = false;
+			alertBoxToggle = true;
 		}
 	});
 </script>

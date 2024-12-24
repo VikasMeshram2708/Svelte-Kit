@@ -98,6 +98,24 @@ export const actions = {
 				});
 			}
 
+			// Validate User Notes Count
+			const notesCount = await db
+				.select({
+					count: sql<number>`count(*) over()`
+				})
+				.from(notes)
+				.where(eq(notes?.userId, String(session?.user?.id)));
+
+			const premiumCount = notesCount?.[0]?.count;
+			console.log('SERVER: COUNT', premiumCount);
+			if (premiumCount > 30) {
+				return fail(400, {
+					success: false,
+					error: 'Your Free Tier is finished.Cannot create more than 30 notes.Buy a premium.',
+					count: premiumCount
+				});
+			}
+
 			// Parse form data
 			const formData = await request.formData();
 

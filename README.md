@@ -10,7 +10,7 @@
 
   - [x] SKip = 5, Limit = 5 are default.
 
-- [ ] Normal User Can only create 30 Notes.
+- [x] Normal User Can only create 30 Notes.
 
 - [x] Show Notes Table with Pagination.
 
