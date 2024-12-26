@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	}
 
 	const limit = Math.min(Math.max(Number(url.searchParams.get('limit')) || 5, 1), 30);
-	const skip = Math.min(Math.max(Number(url.searchParams.get('skip')) || 0, 0), 30);
+	const skip = Math.min(Math.max(Number(url.searchParams.get('skip')) || 0, 0), 5);
 
 	// Fetch total todos and paginated todos
 	const [totalTodos, todos] = await Promise.all([

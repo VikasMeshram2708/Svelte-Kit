@@ -15,12 +15,12 @@
 <div class="">
 	{#if toggleModal}
 		{#if form?.success}
-			<div class="alert variant-filled-primary mx-auto max-w-lg">
-				<p class="alert-message">{form?.success}</p>
+			<div class="alert variant-filled-primary mx-auto container max-w-lg">
+				<p class="alert-message">Success: Todo Added</p>
 				{@render CloseButton()}
 			</div>
 		{:else if form?.error}
-			<div class="alert variant-filled-primary mx-auto max-w-lg">
+			<div class="alert variant-filled-primary mx-auto container max-w-lg">
 				<p class="alert-message">{form?.error}</p>
 				{@render CloseButton()}
 			</div>

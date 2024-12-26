@@ -15,8 +15,13 @@
 		totalPages: Math.ceil(data?.metadata.total / pageSize)
 	});
 
-	console.log('todos', data?.todos);
+	// console.log('todos', data?.todos);
 </script>
+
+<svelte:head>
+	<title>Svelte Powered: Todo App</title>
+	<meta name="description" content="svelte kit 5 powered best todo app" />
+</svelte:head>
 
 <div class="h-screen w-screen py-10">
 	<TodoForm {form} />
@@ -39,9 +44,16 @@
 		</div>
 
 		{#each data?.todos as todo (todo?.id)}
-			<article class="card flex items-center p-4">
-				<input class="checkbox" type="checkbox" name="done" />
-				<h1 class="card-header px-4 py-2 capitalize">{todo.content}</h1>
+			<article class="card flex items-center justify-between p-4">
+				<div class="flex items-center">
+					<input class="checkbox" type="checkbox" name="done" />
+					<h1 class="card-header px-4 py-2 capitalize">{todo.content}</h1>
+				</div>
+				<div class="">
+					<p class="text-sm">
+						Created on : {todo.createdAt.toLocaleDateString()}
+					</p>
+				</div>
 			</article>
 		{/each}
 	</div>
