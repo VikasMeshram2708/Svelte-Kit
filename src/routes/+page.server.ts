@@ -4,15 +4,40 @@ import type { Actions, PageServerLoad } from './$types';
 import { todoSchema } from '../model/todo';
 import { prismaInstance, verifyUser } from '$lib';
 
-export const load: PageServerLoad = async ({ cookies }) => {
+export const load: PageServerLoad = async ({ cookies, url }) => {
 	const session = cookies.get('svAuth') || '';
 
 	if (!session) {
 		throw redirect(302, '/auth/login');
-		// return {
-		// 	error: 'Login Required'
-		// };
 	}
+
+	const user = await verifyUser(session);
+	// @ts-ignore
+	const userId = user.token.id;
+	if (!userId) {
+		throw redirect(302, '/auth/login');
+	}
+
+	const limit = Math.min(Math.max(Number(url.searchParams.get('limit')) || 5, 1), 30);
+	const skip = Math.min(Math.max(Number(url.searchParams.get('skip')) || 0, 0), 30);
+
+	// Fetch total todos and paginated todos
+	const [totalTodos, todos] = await Promise.all([
+		prismaInstance.todo.count({ where: { userId } }),
+		prismaInstance.todo.findMany({
+			where: { userId },
+			orderBy: {
+				createdAt: 'desc'
+			},
+			skip,
+			take: limit
+		})
+	]);
+
+	return {
+		todos,
+		metadata: { total: totalTodos }
+	};
 };
 
 export const actions: Actions = {

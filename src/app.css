@@ -2,6 +2,10 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+.b {
+	border: 2px solid red;
+}
+
 .chead {
 	@apply text-xl font-bold md:text-2xl lg:text-3xl xl:text-4xl;
 }

@@ -1,33 +1,45 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { X } from 'lucide-svelte';
 	import type { ActionData } from '../../routes/$types';
 
 	let { form }: { form: ActionData } = $props();
-	// import { toast } from 'svoast';
-
-	console.log('todo', { form });
+	let toggleModal = $state(true);
 </script>
 
-<div class="h-screen w-screen">
-	{#if form?.success}
-		<p>Success: Todo Added</p>
-	{:else if form?.error}
-		<p>Failed:</p>
+{#snippet CloseButton()}
+	<button onclick={() => (toggleModal = false)} type="button">
+		<X />
+	</button>
+{/snippet}
+
+<div class="">
+	{#if toggleModal}
+		{#if form?.success}
+			<div class="alert variant-filled-primary mx-auto max-w-lg">
+				<p class="alert-message">{form?.success}</p>
+				{@render CloseButton()}
+			</div>
+		{:else if form?.error}
+			<div class="alert variant-filled-primary mx-auto max-w-lg">
+				<p class="alert-message">{form?.error}</p>
+				{@render CloseButton()}
+			</div>
+		{/if}
 	{/if}
+
 	<article class="card mx-auto max-w-xl shadow-lg">
-		<form
-			use:enhance={() => {
-				return ({ result, update }) => {
-					// console.log('res', result?.data?.error[0]);
+		<!-- use:enhance={() => {
+				return async ({ result, update }) => {
 					if (result.type === 'failure') {
-						// @ts-ignore
 						let errMsg = result?.data?.error[0];
 						return alert(errMsg);
 					}
 					alert('Todo Added');
+					await invalidate((url) => url.pathname === '/');
 					return update();
 				};
-			}}
+			}} -->
+		<form
 			action="?/addTodo"
 			method="POST"
 			class="card container mx-auto grid max-w-xl gap-3 rounded p-4 shadow-lg"
